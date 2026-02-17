@@ -1,0 +1,11 @@
+mode: standalone
+auth:
+  rootUser: admin
+  rootPassword: changeme
+persistence:
+  enabled: true
+  size: 10Gi
+service:
+  type: ClusterIP
+ingress:
+  enabled: false

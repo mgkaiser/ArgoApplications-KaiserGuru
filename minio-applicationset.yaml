@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: wordpress-instances
+  name: minio-instances
   namespace: argocd
 spec:
   generators:
@@ -9,9 +9,9 @@ spec:
       repoURL: https://github.com/mgkaiser/ArgoApplications-KaiserGuru.git
       revision: HEAD
       directories:
-      - path: wordpress-instances/*
+      - path: minio-instances/*
       files:
-      - path: wordpress-instances/*/config.json
+      - path: minio-instances/*/config.json
   template:
     metadata:
       name: '{{path.basename}}'
@@ -19,8 +19,8 @@ spec:
       project: default
       sources:
       - repoURL: https://charts.bitnami.com/bitnami
-        chart: wordpress
-        targetRevision: 28.1.2
+        chart: minio
+        targetRevision: 14.8.4
         helm:
           valueFiles:
           - $values/{{path}}/values.yaml
@@ -30,13 +30,7 @@ spec:
         ref: values
       destination:
         server: '{{server}}'
-        namespace: '{{path.basename}}'
+        namespace: minio
       syncPolicy:
         syncOptions:
         - CreateNamespace=true
-      ignoreDifferences:
-      - group: ""
-        kind: Secret
-        name: '{{path.basename}}-mariadb'
-        jsonPointers:
-        - /data
