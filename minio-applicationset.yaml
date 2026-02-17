@@ -5,13 +5,18 @@ metadata:
   namespace: argocd
 spec:
   generators:
-  - git:
-      repoURL: https://github.com/mgkaiser/ArgoApplications-KaiserGuru.git
-      revision: HEAD
-      directories:
-      - path: minio-instances/*
-      files:
-      - path: minio-instances/*/config.json
+  - matrix:
+      generators:
+      - git:
+          repoURL: https://github.com/mgkaiser/ArgoApplications-KaiserGuru.git
+          revision: HEAD
+          directories:
+          - path: minio-instances/*
+      - git:
+          repoURL: https://github.com/mgkaiser/ArgoApplications-KaiserGuru.git
+          revision: HEAD
+          files:
+          - path: '{{path}}/config.json'
   template:
     metadata:
       name: '{{path.basename}}'

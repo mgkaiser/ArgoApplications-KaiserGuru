@@ -5,13 +5,18 @@ metadata:
   namespace: argocd
 spec:
   generators:
-  - git:
-      repoURL: https://github.com/mgkaiser/ArgoApplications-KaiserGuru.git
-      revision: HEAD
-      directories:
-      - path: wordpress-instances/*
-      files:
-      - path: wordpress-instances/*/config.json
+  - matrix:
+      generators:
+      - git:
+          repoURL: https://github.com/mgkaiser/ArgoApplications-KaiserGuru.git
+          revision: HEAD
+          directories:
+          - path: wordpress-instances/*
+      - git:
+          repoURL: https://github.com/mgkaiser/ArgoApplications-KaiserGuru.git
+          revision: HEAD
+          files:
+          - path: '{{path}}/config.json'
   template:
     metadata:
       name: '{{path.basename}}'
