@@ -22,7 +22,7 @@ spec:
         helm:
           valueFiles:
           - $values/{{path}}/values.yaml
-          releaseName: wordpress
+          releaseName: '{{path.basename}}'
       - repoURL: https://github.com/mgkaiser/ArgoApplications-KaiserGuru.git
         targetRevision: HEAD
         ref: values

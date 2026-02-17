@@ -1,8 +1,11 @@
 # Placeholder values for WordPress instance in 'wordpress-catkaiserart' namespace
 # Based on Bitnami WordPress Helm Chart
 
+# WARNING: These are placeholder values! Change these before deploying to production.
+# For production, use existingSecret to reference Kubernetes secrets instead of hardcoded passwords.
+
 wordpressUsername: admin
-wordpressPassword: "changeme"
+wordpressPassword: "changeme"  # CHANGE THIS! Or use existingSecret
 wordpressEmail: admin@catkaiserart.example.com
 wordpressFirstName: Admin
 wordpressLastName: User
@@ -20,10 +23,10 @@ persistence:
 
 mariadb:
   auth:
-    rootPassword: "changeme"
+    rootPassword: "changeme"  # CHANGE THIS! Or use existingSecret
     database: bitnami_wordpress
     username: bn_wordpress
-    password: "changeme"
+    password: "changeme"  # CHANGE THIS! Or use existingSecret
   primary:
     persistence:
       enabled: true
