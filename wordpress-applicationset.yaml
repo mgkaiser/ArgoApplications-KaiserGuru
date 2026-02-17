@@ -35,6 +35,6 @@ spec:
       ignoreDifferences:
       - group: ""
         kind: Secret
-        name: wordpress-mariadb
+        name: '{{path.basename}}-mariadb'
         jsonPointers:
         - /data
