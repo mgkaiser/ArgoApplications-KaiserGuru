@@ -18,7 +18,7 @@ spec:
       sources:
       - repoURL: https://charts.bitnami.com/bitnami
         chart: wordpress
-        targetRevision: 21.0.0
+        targetRevision: 28.1.2
         helm:
           valueFiles:
           - $values/{{path}}/values.yaml
@@ -32,4 +32,9 @@ spec:
       syncPolicy:
         syncOptions:
         - CreateNamespace=true
-
+      ignoreDifferences:
+      - group: ""
+        kind: Secret
+        name: wordpress-mariadb
+        jsonPointers:
+        - /data
