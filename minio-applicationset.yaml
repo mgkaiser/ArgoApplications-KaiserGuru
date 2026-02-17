@@ -25,7 +25,7 @@ spec:
       sources:
       - repoURL: https://charts.bitnami.com/bitnami
         chart: minio
-        targetRevision: 14.8.4
+        targetRevision: 15.0.3
         helm:
           valueFiles:
           - $values/{{path}}/values.yaml
