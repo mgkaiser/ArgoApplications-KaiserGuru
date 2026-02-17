@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: wordpress-instances
+  namespace: argocd
+spec:
+  generators:
+  - git:
+      repoURL: https://github.com/mgkaiser/ArgoApplications-KaiserGuru.git
+      revision: HEAD
+      directories:
+      - path: wordpress-instances/*
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: default
+      sources:
+      - repoURL: https://charts.bitnami.com/bitnami
+        chart: wordpress
+        targetRevision: 21.0.0
+        helm:
+          valueFiles:
+          - $values/{{path}}/values.yaml
+          releaseName: wordpress
+      - repoURL: https://github.com/mgkaiser/ArgoApplications-KaiserGuru.git
+        targetRevision: HEAD
+        ref: values
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{path.basename}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true

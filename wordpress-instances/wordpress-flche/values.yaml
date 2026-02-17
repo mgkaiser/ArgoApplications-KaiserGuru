@@ -1,0 +1,30 @@
+# Placeholder values for WordPress instance in 'wordpress-flche' namespace
+# Based on Bitnami WordPress Helm Chart
+
+wordpressUsername: admin
+wordpressPassword: "changeme"
+wordpressEmail: admin@flche.example.com
+wordpressFirstName: Admin
+wordpressLastName: User
+wordpressBlogName: WordPress Flche Blog
+
+service:
+  type: ClusterIP
+
+ingress:
+  enabled: false
+
+persistence:
+  enabled: true
+  size: 10Gi
+
+mariadb:
+  auth:
+    rootPassword: "changeme"
+    database: bitnami_wordpress
+    username: bn_wordpress
+    password: "changeme"
+  primary:
+    persistence:
+      enabled: true
+      size: 8Gi
