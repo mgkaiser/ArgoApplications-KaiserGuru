@@ -4,6 +4,18 @@ persistence:
     enabled: true
 service:
     type: ClusterIP
+readinessProbe:
+    initialDelaySeconds: 120
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+livenessProbe:
+    initialDelaySeconds: 120
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
 ingress:
     enabled: true
     hostname: www.kaiser.guru
