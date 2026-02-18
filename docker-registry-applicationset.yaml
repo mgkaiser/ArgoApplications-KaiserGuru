@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: docker-registry-instances
+  namespace: argocd
+spec:
+  generators:
+  - matrix:
+      generators:
+      - git:
+          repoURL: https://github.com/mgkaiser/ArgoApplications-KaiserGuru.git
+          revision: HEAD
+          directories:
+          - path: docker-registry-instances/*
+      - git:
+          repoURL: https://github.com/mgkaiser/ArgoApplications-KaiserGuru.git
+          revision: HEAD
+          files:
+          - path: '{{path}}/config.json'
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: default
+      sources:
+      - repoURL: https://helm.twun.io
+        chart: docker-registry
+        targetRevision: 3.0.0
+        helm:
+          valueFiles:
+          - $values/{{path}}/values.yaml
+          releaseName: '{{path.basename}}'
+      - repoURL: https://github.com/mgkaiser/ArgoApplications-KaiserGuru.git
+        targetRevision: HEAD
+        ref: values
+      destination:
+        server: '{{server}}'
+        namespace: docker-registry
+      syncPolicy:
+        syncOptions:
+        - CreateNamespace=true
