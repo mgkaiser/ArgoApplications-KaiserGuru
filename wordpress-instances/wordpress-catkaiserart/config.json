@@ -1,3 +1,5 @@
 {
-  "server": "https://kubernetes.default.svc"
+  "name": "wordpress-catkaiserart",
+  "server": "https://kubernetes.default.svc",
+  "namespace": "wordpress-catkaiserart"
 }

@@ -1,62 +1,131 @@
 # ArgoApplications-KaiserGuru
+
 Helm charts for ArgoCD on rancher.kaiser.guru
 
-## WordPress ApplicationSet
+## Overview
 
-This repository contains an ArgoCD ApplicationSet that deploys multiple WordPress instances using the Bitnami WordPress Helm chart.
+This repository contains ArgoCD ApplicationSets that deploy multiple instances of different applications using Helm charts. All ApplicationSets use a matrix generator pattern to combine directory discovery with per-instance configuration files.
 
-### Structure
+## Main Application
 
+### applicationsets-application.yaml
+
+An ArgoCD Application that manages all ApplicationSets in this repository. This allows all ApplicationSets to be deployed and kept in sync through a single application.
+
+## ApplicationSets
+
+### WordPress ApplicationSet
+
+**File**: `wordpress-applicationset.yaml`
+
+Deploys multiple WordPress instances using the Bitnami WordPress Helm chart (version 28.1.2).
+
+**Structure**:
 ```
-wordpress-applicationset.yaml         # ArgoCD ApplicationSet definition
-wordpress-instances/                  # Directory containing WordPress configurations
-├── wordpress/                        # Configuration for 'wordpress' namespace
-│   └── values.yaml
-├── wordpress-flche/                  # Configuration for 'wordpress-flche' namespace
-│   └── values.yaml
-└── wordpress-catkaiserart/          # Configuration for 'wordpress-catkaiserart' namespace
-    └── values.yaml
-```
-
-### How It Works
-
-The ApplicationSet uses the **Git Directory Generator** to automatically discover WordPress instances:
-
-1. It scans the `wordpress-instances/*` directory for subdirectories
-2. For each subdirectory found, it creates an ArgoCD Application
-3. Each Application:
-   - Deploys Bitnami WordPress Helm chart (version 21.0.0)
-   - Uses the `values.yaml` from the corresponding directory
-   - Creates a namespace matching the directory name
-   - Uses automatic sync with prune and self-heal enabled
-
-### Deployment
-
-To deploy this ApplicationSet to your ArgoCD instance:
-
-```bash
-kubectl apply -f wordpress-applicationset.yaml
+wordpress-instances/
+├── wordpress-kaiserguru/
+│   ├── values.yaml
+│   └── config.json
+├── wordpress-flche/
+│   ├── values.yaml
+│   └── config.json
+└── wordpress-catkaiserart/
+    ├── values.yaml
+    └── config.json
 ```
 
-This will create 3 WordPress instances in the following namespaces:
-- `wordpress`
-- `wordpress-flche`
-- `wordpress-catkaiserart`
+**Features**:
+- Each instance specifies its name, destination server, and namespace via `config.json`
+- Each instance creates its own namespace
+- Automatic namespace creation enabled
 
-### Adding New WordPress Instances
+### MinIO ApplicationSet
 
-To add a new WordPress instance:
+**File**: `minio-applicationset.yaml`
 
-1. Create a new directory under `wordpress-instances/` with your desired namespace name
-2. Add a `values.yaml` file with your configuration
-3. Commit and push the changes
-4. ArgoCD will automatically detect and deploy the new instance
+Deploys MinIO object storage instances using the Bitnami MinIO Helm chart (version 15.0.3).
 
-### Security Notice
+**Structure**:
+```
+minio-instances/
+└── minio/
+    ├── values.yaml
+    └── config.json
+```
 
-⚠️ **IMPORTANT**: The provided `values.yaml` files contain placeholder passwords (`changeme`). These are **NOT** suitable for production use.
+**Features**:
+- Standalone mode by default
+- Each instance specifies its name, destination server, and namespace via `config.json`
+- Persistent storage (10Gi by default)
+- Uses Bitnami registry (registry-1.docker.io)
+
+### Docker Registry ApplicationSet
+
+**File**: `docker-registry-applicationset.yaml`
+
+Deploys Docker Registry instances using the docker-registry Helm chart (version 3.0.0).
+
+**Structure**:
+```
+docker-registry-instances/
+└── docker-registry/
+    ├── values.yaml
+    └── config.json
+```
+
+**Features**:
+- Each instance specifies its name, destination server, and namespace via `config.json`
+- Includes ingress configuration for `registry.kaiser.guru`
+- Persistent storage (50Gi with NFS StorageClass)
+- Garbage collection and deletion enabled
+- htpasswd authentication configured
+
+## Configuration
+
+Each instance uses a `config.json` file to specify:
+
+- **name**: The ArgoCD Application name
+- **server**: The Kubernetes cluster API server URL (e.g., `https://kubernetes.default.svc`)
+- **namespace**: The target namespace for deployment
+
+**Example config.json**:
+```json
+{
+  "name": "my-app-instance",
+  "server": "https://kubernetes.default.svc",
+  "namespace": "my-app"
+}
+```
+
+## Adding New Instances
+
+To add a new instance of any application:
+
+1. Create a new directory under the corresponding `*-instances/` folder
+2. Add a `values.yaml` file with your Helm chart configuration
+3. Add a `config.json` file specifying the name, destination server, and namespace:
+   ```json
+   {
+     "name": "my-instance-name",
+     "server": "https://kubernetes.default.svc",
+     "namespace": "my-namespace"
+   }
+   ```
+4. Commit and push the changes
+5. ArgoCD will automatically detect and deploy the new instance
+
+## Security Notice
+
+⚠️ **IMPORTANT**: The provided configuration files contain default/placeholder credentials:
+- WordPress: `admin` / `changeme`
+- MinIO: `admin` / `changeme`
+- Docker Registry: htpasswd entry for `mkaiser`
+
+These are **NOT** suitable for production use.
 
 Before deploying to production:
 - Change all passwords to strong, unique values
-- Consider using Kubernetes secrets and `existingSecret` parameters
+- Consider using Kubernetes secrets for sensitive data
 - Review and adjust all configuration values for your environment
+- Enable TLS for all services
+- Implement proper access controls

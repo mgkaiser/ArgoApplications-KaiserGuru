@@ -1,3 +1,5 @@
 {
-  "server": "https://kubernetes.default.svc"
+  "name": "docker-registry",
+  "server": "https://kubernetes.default.svc",
+  "namespace": "docker-registry"
 }

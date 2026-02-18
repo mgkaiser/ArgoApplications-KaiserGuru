@@ -19,7 +19,7 @@ spec:
           - path: '{{path}}/config.json'
   template:
     metadata:
-      name: '{{path.basename}}'
+      name: '{{name}}'
     spec:
       project: default
       sources:
@@ -35,7 +35,7 @@ spec:
         ref: values
       destination:
         server: '{{server}}'
-        namespace: docker-registry
+        namespace: '{{namespace}}'
       syncPolicy:
         syncOptions:
         - CreateNamespace=true
