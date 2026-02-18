@@ -35,7 +35,7 @@ wordpress-instances/
 ```
 
 **Features**:
-- Each instance specifies its name, destination server, and namespace via `config.json`
+- Each instance specifies its name, cluster, and namespace via `config.json`
 - Each instance creates its own namespace
 - Automatic namespace creation enabled
 
@@ -55,7 +55,7 @@ minio-instances/
 
 **Features**:
 - Standalone mode by default
-- Each instance specifies its name, destination server, and namespace via `config.json`
+- Each instance specifies its name, cluster, and namespace via `config.json`
 - Persistent storage (10Gi by default)
 - Uses Bitnami registry (registry-1.docker.io)
 
@@ -74,7 +74,7 @@ docker-registry-instances/
 ```
 
 **Features**:
-- Each instance specifies its name, destination server, and namespace via `config.json`
+- Each instance specifies its name, cluster, and namespace via `config.json`
 - Includes ingress configuration for `registry.kaiser.guru`
 - Persistent storage (50Gi with NFS StorageClass)
 - Garbage collection and deletion enabled
@@ -85,14 +85,14 @@ docker-registry-instances/
 Each instance uses a `config.json` file to specify:
 
 - **name**: The ArgoCD Application name
-- **server**: The Kubernetes cluster API server URL (e.g., `https://kubernetes.default.svc`)
+- **cluster**: The ArgoCD cluster name (e.g., `in-cluster` for the local cluster)
 - **namespace**: The target namespace for deployment
 
 **Example config.json**:
 ```json
 {
   "name": "my-app-instance",
-  "server": "https://kubernetes.default.svc",
+  "cluster": "in-cluster",
   "namespace": "my-app"
 }
 ```
@@ -103,16 +103,22 @@ To add a new instance of any application:
 
 1. Create a new directory under the corresponding `*-instances/` folder
 2. Add a `values.yaml` file with your Helm chart configuration
-3. Add a `config.json` file specifying the name, destination server, and namespace:
+3. Add a `config.json` file specifying the name, cluster, and namespace:
    ```json
    {
      "name": "my-instance-name",
-     "server": "https://kubernetes.default.svc",
+     "cluster": "in-cluster",
      "namespace": "my-namespace"
    }
    ```
 4. Commit and push the changes
 5. ArgoCD will automatically detect and deploy the new instance
+
+## Cluster Names
+
+Common ArgoCD cluster names:
+- `in-cluster`: The local Kubernetes cluster where ArgoCD is running
+- Other clusters can be configured and referenced by their registered name in ArgoCD
 
 ## Security Notice
 

@@ -1,5 +1,5 @@
 {
   "name": "wordpress-flche",
-  "server": "https://kubernetes.default.svc",
+  "cluster": "in-cluster",
   "namespace": "wordpress-flche"
 }
